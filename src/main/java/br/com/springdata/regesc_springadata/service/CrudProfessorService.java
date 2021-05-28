@@ -2,8 +2,11 @@ package br.com.springdata.regesc_springadata.service;
 
 import br.com.springdata.regesc_springadata.orm.Professor;
 import br.com.springdata.regesc_springadata.repository.ProfessorRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
+import java.util.EmptyStackException;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -26,6 +29,8 @@ public class CrudProfessorService {
             System.out.println("0 - Voltar ao menu anterior");
             System.out.println("1 - Cadastrar novo Professor");
             System.out.println("2 - Atualizar um Professor");
+            System.out.println("3 - Visualizar todos os Professores");
+            System.out.println("4 - Deletar um Professores");
 
             int opcao = scanner.nextInt();
 
@@ -36,6 +41,14 @@ public class CrudProfessorService {
 
                 case 2:
                     this.atualizar(scanner);
+                    break;
+
+                case 3:
+                    this.visualizar();
+                    break;
+
+                case 4:
+                    this.deletar(scanner);
                     break;
 
                 default:
@@ -100,5 +113,31 @@ public class CrudProfessorService {
 
         professorRepository.save(professor); // atualiza(persiste) o objeto/registro/tupla no BD
         System.out.println("Professor atualizado com sucesso!\n");
+    }
+
+    private void visualizar(){
+        Iterable<Professor> professores = this.professorRepository.findAll();
+        for(Professor professor : professores){
+            System.out.println(professor);
+        }
+
+//        professores.forEach(professor -> {
+//            System.out.println(professor);
+//        });
+
+//        professores.forEach(System.out::println);
+        System.out.println();
+    }
+
+    private void deletar(Scanner scanner){
+        System.out.print("Digite o id do Professor a ser deletado: ");
+        Long id = scanner.nextLong();
+
+        try{
+            this.professorRepository.deleteById(id); //se nao encontrar o id passado na tabela, lancara uma excessao
+            System.out.println("Professor deletado!!!");
+        }catch(EmptyResultDataAccessException e){
+            System.out.println("Professor nao econtrado com o id: " + id);
+        }
     }
 }
