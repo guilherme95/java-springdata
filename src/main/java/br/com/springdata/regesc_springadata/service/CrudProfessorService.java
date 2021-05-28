@@ -1,5 +1,6 @@
 package br.com.springdata.regesc_springadata.service;
 
+import br.com.springdata.regesc_springadata.orm.Disciplina;
 import br.com.springdata.regesc_springadata.orm.Professor;
 import br.com.springdata.regesc_springadata.repository.ProfessorRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -31,6 +32,8 @@ public class CrudProfessorService {
             System.out.println("2 - Atualizar um Professor");
             System.out.println("3 - Visualizar todos os Professores");
             System.out.println("4 - Deletar um Professores");
+            System.out.println("5 - Visualizar um Professores");
+            System.out.print("Opção: ");
 
             int opcao = scanner.nextInt();
 
@@ -49,6 +52,10 @@ public class CrudProfessorService {
 
                 case 4:
                     this.deletar(scanner);
+                    break;
+
+                case 5:
+                    this.visualizarProfessor(scanner);
                     break;
 
                 default:
@@ -138,6 +145,29 @@ public class CrudProfessorService {
             System.out.println("Professor deletado!!!");
         }catch(EmptyResultDataAccessException e){
             System.out.println("Professor nao econtrado com o id: " + id);
+        }
+    }
+
+    private void visualizarProfessor(Scanner scanner){
+        System.out.print("Digite o ID do Professor: ");
+        Long id = scanner.nextLong();
+
+        Optional<Professor> professorOptional = this.professorRepository.findById(id);
+        if(professorOptional.isPresent()){
+            Professor professor = professorOptional.get();
+
+            System.out.println("-----Professor-----");
+            System.out.println("ID: " + professor.getId());
+            System.out.println("Nome: " + professor.getNome());
+            System.out.println("Prontuario: " + professor.getProntuario());
+            System.out.println("-----Suas Disciplinas-----");
+            for(Disciplina disciplina : professor.getDisciplinas()){
+                System.out.println("ID: " + disciplina.getId());
+                System.out.println("Nome: " + disciplina.getNome());
+                System.out.println("Semestre: " + disciplina.getSemestre());
+            }
+        }else{
+            System.out.println("O professor com ID "+id+" não encontrado!!!");
         }
     }
 }
