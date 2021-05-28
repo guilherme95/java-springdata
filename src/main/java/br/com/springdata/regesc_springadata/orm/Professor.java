@@ -1,6 +1,7 @@
 package br.com.springdata.regesc_springadata.orm;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Professor {
@@ -11,6 +12,9 @@ public class Professor {
     private String nome;
     @Column(nullable = false, unique = true)
     private String prontuario;
+
+    @OneToMany(mappedBy = "professor", fetch = FetchType.EAGER)
+    private List<Disciplina> disciplinas;
 
     @Deprecated //para indicar que não será usada com frequencia
     public Professor(){}
@@ -23,6 +27,7 @@ public class Professor {
     public void setId(Long id) {
         this.id = id;
     }
+
 
     public Long getId() {
         return id;
@@ -42,6 +47,14 @@ public class Professor {
 
     public void setProntuario(String prontuario) {
         this.prontuario = prontuario;
+    }
+
+    public List<Disciplina> getDisciplinas() {
+        return disciplinas;
+    }
+
+    public void setDisciplinas(List<Disciplina> disciplinas) {
+        this.disciplinas = disciplinas;
     }
 
     @Override
