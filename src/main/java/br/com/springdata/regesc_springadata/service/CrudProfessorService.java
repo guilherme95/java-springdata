@@ -5,6 +5,7 @@ import br.com.springdata.regesc_springadata.orm.Professor;
 import br.com.springdata.regesc_springadata.repository.ProfessorRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.EmptyStackException;
@@ -22,6 +23,9 @@ public class CrudProfessorService {
         this.professorRepository = professorRepository;
     }
 
+    // colocar notação @Transactional para que não ocorra a exception
+    // @Transactional faz uma interação nova de algo que ela não tem no momento, ou seja, faz o novo 'get' necessário
+    // @Transactional
     public void menu(Scanner scanner){
         Boolean isTrue = true;
 
@@ -148,6 +152,9 @@ public class CrudProfessorService {
         }
     }
 
+    // colocar notação @Transactional para que não ocorra a exception
+    // @Transactional faz uma interação nova de algo que ela não tem no momento, ou seja, faz o novo 'get' necessário
+    // @Transactional
     private void visualizarProfessor(Scanner scanner){
         System.out.print("Digite o ID do Professor: ");
         Long id = scanner.nextLong();

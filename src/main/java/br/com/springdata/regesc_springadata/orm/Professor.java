@@ -13,6 +13,9 @@ public class Professor {
     @Column(nullable = false, unique = true)
     private String prontuario;
 
+    // colocar fetch = FetchType.EAGER para que não ocorra a exception
+    // de LAZY para EAGER para que ele traga os dados da outra tabela(caso exista na consulta) junto a tabela principal
+    // cascade = CascadeType.ALL para deletar tabelas que estão associadas a principal da consulta
     @OneToMany(mappedBy = "professor", fetch = FetchType.EAGER)
     private List<Disciplina> disciplinas;
 
@@ -55,6 +58,14 @@ public class Professor {
 
     public void setDisciplinas(List<Disciplina> disciplinas) {
         this.disciplinas = disciplinas;
+    }
+
+    @PreRemove
+    public void atualizaDisciplinasOnRemove() {
+        System.out.println("***** atualizaOnRemove *****");
+        for (Disciplina disciplina : this.getDisciplinas()){
+            disciplina.setProfessor(null);
+        }
     }
 
     @Override
