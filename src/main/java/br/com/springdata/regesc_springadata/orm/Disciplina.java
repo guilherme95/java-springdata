@@ -1,6 +1,7 @@
 package br.com.springdata.regesc_springadata.orm;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Disciplina {
@@ -12,8 +13,14 @@ public class Disciplina {
     private Integer semestre;
 
     @ManyToOne
-    @JoinColumn(name = "professor_id", nullable = false)
+    @JoinColumn(name = "professor_id", nullable = true)
     private Professor professor;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "disciplinas_alunos",
+            joinColumns = @JoinColumn(name = "disciplina_fk"), //key que vem da table atual, ou seja, disciplina
+            inverseJoinColumns = @JoinColumn(name = "aluno_fk")) // key que vem da outra table, ou seja, aluno
+    private Set<Aluno> alunos;
 
     @Deprecated
     public Disciplina() {
@@ -53,6 +60,14 @@ public class Disciplina {
         this.semestre = semestre;
     }
 
+    public Set<Aluno> getAlunos() {
+        return alunos;
+    }
+
+    public void setAlunos(Set<Aluno> alunos) {
+        this.alunos = alunos;
+    }
+
     @Override
     public String toString() {
         return "Disciplina{" +
@@ -60,6 +75,7 @@ public class Disciplina {
                 ", nome='" + nome + '\'' +
                 ", semestre=" + semestre +
                 ", professor=" + professor +
+                ", alunos="+ alunos+
                 '}';
     }
 }

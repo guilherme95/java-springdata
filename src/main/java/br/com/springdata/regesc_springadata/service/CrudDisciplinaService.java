@@ -1,27 +1,30 @@
 package br.com.springdata.regesc_springadata.service;
 
+import br.com.springdata.regesc_springadata.orm.Aluno;
 import br.com.springdata.regesc_springadata.orm.Disciplina;
 import br.com.springdata.regesc_springadata.orm.Professor;
+import br.com.springdata.regesc_springadata.repository.AlunoRepository;
 import br.com.springdata.regesc_springadata.repository.DisciplinaRepository;
 import br.com.springdata.regesc_springadata.repository.ProfessorRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 @Service
 public class CrudDisciplinaService {
 
     private DisciplinaRepository disciplinaRepository;
     private ProfessorRepository professorRepository; //dependecia da classe CrudProfessorService
-
+    private AlunoRepository alunoRepository;
     // o Spring automaticamente cria um objeto com a interface 'ProfessorRepository',
     // e o injeta para nós no construtor da classe atual ==> Injeçao de dependencia
     public CrudDisciplinaService(DisciplinaRepository disciplinaRepository,
-                                 ProfessorRepository professorRepository){
+                                 ProfessorRepository professorRepository,
+                                 AlunoRepository alunoRepository){
         this.disciplinaRepository = disciplinaRepository;
         this.professorRepository = professorRepository;
+        this.alunoRepository = alunoRepository;
     }
 
     public void menu(Scanner scanner){
@@ -34,6 +37,7 @@ public class CrudDisciplinaService {
             System.out.println("2 - Atualizar um Disciplina");
             System.out.println("3 - Visualizar todos os Disciplina");
             System.out.println("4 - Deletar um Disciplina");
+            System.out.println("5 - Matricular Alunos");
             System.out.print("Opção: ");
 
             int opcao = scanner.nextInt();
@@ -53,6 +57,10 @@ public class CrudDisciplinaService {
 
                 case 4:
                     this.deletar(scanner);
+                    break;
+
+                case 5:
+                    this.matricularAlunos(scanner);
                     break;
 
                 default:
@@ -135,6 +143,45 @@ public class CrudDisciplinaService {
             System.out.println("Disciplina deletada!!!");
         }catch(EmptyResultDataAccessException e){
             System.out.println("Professor nao econtrado com o id: " + id);
+        }
+    }
+
+    private Set<Aluno> matricular(Scanner scanner){
+        Boolean isTrue = true;
+        Set<Aluno> alunos = new HashSet<Aluno>();
+
+        while(isTrue){
+            System.out.println("Id do Aluno a ser matriculado (digite 0 para sair): ");
+            Long alunoId = scanner.nextLong();
+
+            if(alunoId > 0){
+                System.out.println("alunoId: "+ alunoId);
+                Optional<Aluno> optional = this.alunoRepository.findById(alunoId);
+                if(optional.isPresent()){
+                    alunos.add(optional.get());
+                }else{
+                    System.out.println("Nenhum aluno possui id "+alunoId+"!!!");
+                }
+            }else{
+                isTrue = false;
+            }
+        }
+        return alunos;
+    }
+
+    private void matricularAlunos(Scanner scanner){
+        System.out.println("Digite o ID da Disciplina para matricular alunos: ");
+        Long id = scanner.nextLong();
+
+        Optional<Disciplina> optionalDisciplina = this.disciplinaRepository.findById(id);
+
+        if(optionalDisciplina.isPresent()){
+            Disciplina disciplina = optionalDisciplina.get();
+            Set<Aluno> novosAlunos = this.matricular(scanner);
+            disciplina.getAlunos().addAll(novosAlunos);
+            this.disciplinaRepository.save(disciplina);
+        }else{
+            System.out.println("O id da disciplina informada: "+id+" é inválido\n");
         }
     }
 }
