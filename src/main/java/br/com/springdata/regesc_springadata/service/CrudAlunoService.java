@@ -123,7 +123,7 @@ public class CrudAlunoService {
     // @Transactional faz uma interação nova de algo que ela não tem no momento, ou seja, faz o novo 'get' necessário
     // @Transactional
     private void visualizarAluno(Scanner scanner){
-        System.out.print("Digite o ID do Professor: ");
+        System.out.print("Digite o ID do Aluno: ");
         Long id = scanner.nextLong();
 
         Optional<Aluno> optional = this.alunoRepository.findById(id);

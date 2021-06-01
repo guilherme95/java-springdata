@@ -64,6 +64,7 @@ public class RegescSpringadataApplication implements CommandLineRunner {
 
 				case 4:
 					this.relatorioService.menu(scanner);
+					break;
 
 				default:
 					isTrue = false;
